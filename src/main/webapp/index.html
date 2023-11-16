@@ -264,9 +264,9 @@
 									Export<i class="fas fa-download ms-2"></i>
 								</button>
 
-								<div class="row justify-content-center justify-content-lg-end">
-									<div class="col-md-6 mb-4 mb-md-0">
-										<select class="select">
+								<div class="row justify-content-center justify-content-lg-end mb-4">
+									<div class="col-md-10 mb-4 mb-md-0">
+										<select class="select select-subject" data-mdb-filter="true">
 											<option value="1" selected>US Dollar</option>
 											<option value="2">Euro</option>
 											<option value="3">Chinese Yuan</option>
@@ -274,7 +274,21 @@
 											<option value="5">Swiss Franc</option>
 											<option value="5">British Pound Sterling</option>
 										</select>
-										<label class="form-label select-label">Fiat currency displayed</label>
+										<label class="form-label select-label">Warning Letter Subject</label>
+									</div>
+
+								</div>
+								<div class="row justify-content-center justify-content-lg-end">
+									<div class="col-md-10 mb-4 mb-md-0" data-mdb-filter="true">
+										<select class="select select-issuing-office">
+											<option value="1" selected>US Dollar</option>
+											<option value="2">Euro</option>
+											<option value="3">Chinese Yuan</option>
+											<option value="4">Japanese Yen</option>
+											<option value="5">Swiss Franc</option>
+											<option value="5">British Pound Sterling</option>
+										</select>
+										<label class="form-label select-label">Warning Letter Issuing Office</label>
 									</div>
 
 								</div>
@@ -300,7 +314,7 @@
 						<h5 class="mb-0 text-center"><strong>Warning letters by Year</strong></h5>
 					</div>
 					<div class="card-body">
-						<canvas class="my-4 w-100" id="myChart" height="380"></canvas>
+						<canvas class="my-4 w-100" id="myChart"></canvas>
 					</div>
 				</div>
 			</section>
@@ -312,7 +326,7 @@
 						<h5 class="mb-0 text-center"><strong>Warning letters by Company</strong></h5>
 					</div>
 					<div class="card-body">
-						<canvas class="my-4 w-100" id="myChart2" height="380"></canvas>
+						<canvas class="my-4 w-100" id="myChart2"></canvas>
 					</div>
 				</div>
 			</section>

@@ -14,15 +14,18 @@ import com.google.gson.Gson;
 
 import services.FDAWarningTrackerService;
 
-@WebServlet(urlPatterns = "/api/fda_warning_letter_company")
-public class FdaWarningLettersByCompany extends HttpServlet {
-
+@WebServlet(urlPatterns = "/api/fda_warning_letter_by_year")
+public class FdaWarningLettersByYear extends HttpServlet{
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String issuingOffice = req.getParameter("issuing_office");
+		String issuing_office = req.getParameter("issuing_office");
 		String subject = req.getParameter("subject");
-		List<Map<String, Object>> lst = new FDAWarningTrackerService().getCompanyWiseWarnings(subject, issuingOffice);
+		List<Map<String, Object>> lst = new FDAWarningTrackerService().getYearwiseWarnings(issuing_office, subject);
 		resp.getWriter().append(new Gson().toJson(lst));
 	}
+
 }

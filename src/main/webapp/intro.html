@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<meta http-equiv="x-ua-compatible" content="ie=edge" />
+	<title>FDA WARNING LETTER DASHBOARD</title>
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
+	<!-- Google Fonts Roboto -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+	<!-- MDB -->
+	<link rel="stylesheet" href="css/mdb.min.css" />
+	<!-- Custom styles -->
+	<link rel="stylesheet" href="css/admin.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
+		integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
+		crossorigin="anonymous"></script>
+</head>
+<body>
+<header>
+			<section class="mb-5 mb-lg-8 text-center text-md-start">
+			<!-- Background gradient -->
+			<div class="p-5" style="height: 200px; 
+                            background: linear-gradient(
+                            to right,
+                            hsl(209, 42.2%, 65%),
+                            hsl(209, 42.2%, 85%)
+                            );">
+			</div>
+			<!-- Background gradient -->
+
+			<div class="container px-4">
+				<div class="card shadow-0" style="
+                                        margin-top: -100px;
+                                        ">
+					<div class="card-body py-5 px-5">
+						<div class="row gx-lg-4 align-items-center">
+							<div class="col-lg-6 mb-4 mb-lg-0 text-center text-lg-start">
+								<h1 class="">FDA WARNING LETTERS Dashboard</h1>
+								<!-- Breadcrumb -->
+							</div>
+
+							<div class="col-lg-6 text-center text-lg-end">
+								<button type="button" class="btn btn-link me-1 mb-4 px-2 px-md-3"
+									data-ripple-color="primary">
+									Customize<i class="fas fa-cogs ms-2"></i>
+								</button>
+								<button type="button" class="btn btn-link mb-4 px-2 px-md-3"
+									data-ripple-color="primary">
+									Export<i class="fas fa-download ms-2"></i>
+								</button>
+
+								<div class="row justify-content-center justify-content-lg-end">
+									<div class="col-md-6 mb-4 mb-md-0">
+										<select class="select">
+											<option value="1" selected>all</option>
+											<option value="2">Euro</option>
+											<option value="3">Chinese Yuan</option>
+											<option value="4">Japanese Yen</option>
+											<option value="5">Swiss Franc</option>
+											<option value="5">British Pound Sterling</option>
+										</select>
+										<label class="form-label select-label">ISSUING OFFICE</label>
+									</div>
+
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</section>
+</header>
+<main style="margin-top: 58px">
+		<div class="container px-4">
+			<!-- Section: Main chart -->
+			<section class="mb-4">
+				<div class="card">
+					<div class="card-header py-3">
+						<h5 class="mb-0 text-center"><strong>Warning letters by Year</strong></h5>
+					</div>
+					<div class="card-body">
+						<canvas class="my-4 w-100" id="myChart" height="380"></canvas>
+					</div>
+				</div>
+			</section>
+			<!-- Section: Main chart -->
+			<!-- Section: Bar chart -->
+			<section class="mb-4">
+				<div class="card">
+					<div class="card-header py-3">
+						<h5 class="mb-0 text-center"><strong>Warning letters by Company</strong></h5>
+					</div>
+					<div class="card-body">
+						<canvas class="my-4 w-100" id="myChart2" height="380"></canvas>
+					</div>
+				</div>
+			</section>
+			<!-- Section: Bar chart -->
+			</div>
+</main>
+<script type="text/javascript" src="js/mdb.min.js"></script>
+	<!-- Custom scripts -->
+<script type="text/javascript" src="js/admin.js"></script>
+</body>
+</html>
