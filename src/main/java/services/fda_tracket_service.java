@@ -22,8 +22,8 @@ public class fda_tracket_service {
 	        ResultSet rs = ps.executeQuery();
 	        while (rs.next()) {
 	        	fda_warning_letter_1 e = new fda_warning_letter_1();
-	            e.setYear(rs.getInt(1));
-	            e.setCount(rs.getInt(2));
+	            e.setYear(rs.getInt(2));
+	            e.setCount(rs.getInt(1));
 	            list.add(e);
 	        }
 	        con.close();
