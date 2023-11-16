@@ -101,7 +101,7 @@ fetch('api/fda_warning_letter_1')
 
 
 
-fetch('api/fda_warning_letter_1')
+fetch('api/fda_warning_letter_company')
 	.then((response) => {
 		if (!response.ok) {
 			throw new Error(`HTTP error! Status: ${response.status}`);
@@ -110,15 +110,17 @@ fetch('api/fda_warning_letter_1')
 		return response.json();
 	})
 	.then((response) => {
-
+		var labels = [];
+		var data = [];
+		response.forEach(function(i,k){labels.push(i.company_name); data.push(i.count);})
 		const dataChartOptionsExample = {
 			type: 'bar',
 			data: {
-				labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+				labels: labels,
 				datasets: [
 					{
-						label: 'Traffic',
-						data: [30, 15, 62, 65, 61, 6],
+						label: 'Top Offendors',
+						data: data,
 						backgroundColor: [
 							'rgba(255, 99, 132, 0.2)',
 							'rgba(54, 162, 235, 0.2)',
