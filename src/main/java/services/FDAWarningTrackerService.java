@@ -24,15 +24,16 @@ public class FDAWarningTrackerService {
 			if (issuingOffice != null && issuingOffice.length() > 0) {
 				filter += " and	issuing_office = ? ";
 			}
-			String sql = "select distinct company_name as company_name,\n" + "count(*) as count\n"
+			String sql = "select company_name as company_name,\n" + "count(*) as count\n"
 					+ "from fda_warning_letter_1 fwl\n" + "where\n" + "	1 = 1\n" + filter + "	\n"
 					+ "group by company_name\n" + "order by count(*)  desc\n" + "limit 10;";
 			PreparedStatement ps = con.prepareStatement(sql);
+			int parameterIndex = 1;
 			if (subject != null && subject.length() > 0) {
-				ps.setString(1, subject);
+				ps.setString(parameterIndex++, subject);
 			}
 			if (issuingOffice != null && issuingOffice.length() > 0) {
-				ps.setString(2, issuingOffice);
+				ps.setString(parameterIndex, issuingOffice);
 			}
 
 			ResultSet rs = ps.executeQuery();
@@ -68,11 +69,12 @@ public class FDAWarningTrackerService {
 					+ filter + "group by\n" + "	extract(year\n" + "from\n" + "	issue_date)\n" + "order by\n"
 					+ "	extract(year\n" + "from\n" + "	issue_date);";
 			PreparedStatement ps = con.prepareStatement(sql);
+			int parameterIndex = 1;
 			if (subject != null && subject.length() > 0) {
-				ps.setString(1, subject);
+				ps.setString(parameterIndex++, subject);
 			}
 			if (issuingOffice != null && issuingOffice.length() > 0) {
-				ps.setString(2, issuingOffice);
+				ps.setString(parameterIndex, issuingOffice);
 			}
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -133,6 +135,46 @@ public class FDAWarningTrackerService {
 		}
 
 		return list;
+	}
+
+	public List<Map<String, Object>> getCountryWiseWarnings(String issuingOffice, String subject) {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
+		try {
+			Connection con = FDATrackerDAO.getConnection();
+			String filter = "";
+			if (subject != null && subject.length() > 0) {
+				filter += " and subject = ? ";
+			}
+			if (issuingOffice != null && issuingOffice.length() > 0) {
+				filter += " and	issuing_office = ? ";
+			}
+			String sql = "select distinct recipient_country ,count(*) as count \r\n"
+					+ "from fda_warning_letter_1 fwl\r\n" + "where 1=1" + filter + "group by recipient_country \r\n"
+					+ "order by count(*) desc ;";
+			PreparedStatement ps = con.prepareStatement(sql);
+			System.out.println(sql);
+			int parameterIndex = 1;
+			if (subject != null && subject.length() > 0) {
+				ps.setString(parameterIndex++, subject);
+			}
+			if (issuingOffice != null && issuingOffice.length() > 0) {
+				ps.setString(parameterIndex, issuingOffice);
+			}
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Map<String, Object> e = new HashMap<String, Object>();
+				e.put("Recipient_Country", rs.getString("recipient_country"));
+				e.put("count", rs.getInt("count"));
+				list.add(e);
+			}
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return list;
+
 	}
 
 }

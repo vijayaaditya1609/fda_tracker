@@ -1,7 +1,12 @@
 // Graph
 const sidenav = document.getElementById("main-sidenav");
 const sidenavInstance = mdb.Sidenav.getInstance(sidenav);
-var subjectFilter = 'Foreign Supplier Verification Program (FSVP)';
+const map = document.getElementById('map-advanced');
+const legend = document.getElementById('map-advanced-legend');
+const displayBtns = document.getElementsByClassName('map-advanced-display');
+const btns = document.getElementsByClassName('btn-map-advanced');
+
+var subjectFilter = undefined;
 var subjects = [];
 var issuingOfficeFilter;
 var issuingOffices = [];
@@ -118,6 +123,8 @@ function loadWarningLettersByYearChart() {
 }
 loadWarningLettersByCompanyChart();
 loadWarningLettersByYearChart();
+loadCountOfWarningLettersByCountry();
+
 fetch('api/fda_warning_letter_subjects')
 	.then((response) => {
 		if (!response.ok) {
@@ -129,7 +136,7 @@ fetch('api/fda_warning_letter_subjects')
 	.then((response) => {
 		subjects = response;
 		var html = '<option selected value = "-1">Please Select Subject	</option>';
-		response.forEach(function(i, k) { html += `<option value="` + k + `" >[`+i.count+`] ` + i.subject + `</option>` });
+		response.forEach(function(i, k) { html += `<option value="` + k + `" >[` + i.count + `] ` + i.subject + `</option>` });
 		document.querySelector('.select-subject').innerHTML = html;
 	});
 fetch('api/fda_warning_letter_issuing_offices')
@@ -143,7 +150,7 @@ fetch('api/fda_warning_letter_issuing_offices')
 	.then((response) => {
 		issuingOffices = response;
 		var html = '<option selected value = "-1">Please Select Issuing Office</option>';
-		response.forEach(function(i, k) { html += `<option value="1" >[`+i.count+`] ` + i.issuing_office + `</option>` });
+		response.forEach(function(i, k) { html += `<option value="1" >[` + i.count + `] ` + i.issuing_office + `</option>` });
 		document.querySelector('.select-issuing-office').innerHTML = html;
 	});
 
@@ -156,6 +163,7 @@ document.querySelector('.select-subject').addEventListener("change", function() 
 	}
 	loadWarningLettersByYearChart()
 	loadWarningLettersByCompanyChart()
+	loadCountOfWarningLettersByCountry()
 });
 
 document.querySelector('.select-issuing-office').addEventListener("change", function() {
@@ -167,8 +175,168 @@ document.querySelector('.select-issuing-office').addEventListener("change", func
 	}
 	loadWarningLettersByYearChart()
 	loadWarningLettersByCompanyChart()
+	loadCountOfWarningLettersByCountry()
+});
+let COLOR_MAP = null;
+
+let ACTIVE_KEY = 'sales';
+let ACTIVE_COLOR = 'green';
+var DATA = [];
+
+const COLORS = {
+	green: [
+		'#C8E6C9',
+		'#A5D6A7',
+		'#81C784',
+		'#66BB6A',
+		'#4CAF50',
+		'#43A047',
+		'#388E3C',
+		'#2E7D32',
+		'#1B5E20',
+	],
+	pink: [
+		'#F8BBD0',
+		'#F48FB1',
+		'#F06292',
+		'#EC407A',
+		'#E91E63',
+		'#D81B60',
+		'#C2185B',
+		'#AD1457',
+		'#880E4F',
+	],
+	blue: [
+		'#BBDEFB',
+		'#90CAF9',
+		'#64B5F6',
+		'#42A5F5',
+		'#2196F3',
+		'#1E88E5',
+		'#1976D2',
+		'#1565C0',
+		'#0D47A1',
+	],
+	purple: [
+		'#E1BEE7',
+		'#CE93D8',
+		'#BA68C8',
+		'#AB47BC',
+		'#9C27B0',
+		'#8E24AA',
+		'#7B1FA2',
+		'#6A1B9A',
+		'#4A148C',
+	],
+};
+
+function loadCountOfWarningLettersByCountry() {
+	var url = "/fdatracker/api/fda_warning_letter_country";
+	if (subjectFilter) {
+		url = url + "?subject=" + encodeURIComponent(subjectFilter)
+	}
+	if (issuingOfficeFilter) {
+		url = url + "?issuing_office=" + encodeURIComponent(issuingOfficeFilter)
+	}
+	fetch(url)
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			return response.json();
+		})
+		.then((response) => {
+			DATA = []
+			response.forEach(function(i, k) {
+				var country = undefined;
+				mapInstance._mapUnits.forEach(
+					function(ii, kk) {
+						if (ii.title == i.Recipient_Country) {
+							country = ii.id; return ii.id;
+						}
+					});
+				if (country)
+					DATA.push({ "country": country, "sales": i.count })
+				else console.error('Country not found: ' + i.Recipient_Country);
+			})
+			updateMap();
+		});
+}
+const getColorMap = () => {
+	const values = DATA.map((entry) => entry[ACTIVE_KEY]);
+	const max = Math.max(...values);
+	const min = Math.min(...values);
+
+	var step = Math.floor((max - min) / (COLORS[ACTIVE_COLOR].length - 1));
+	if (step == 0)
+		step = 1;
+	const colorMap = COLORS[ACTIVE_COLOR].map((color, i) => {
+		return {
+			fill: color,
+			regions: [],
+		};
+	});
+
+	values.forEach((value, i) => {
+		let valueLabel = value;
+		let val = value
+		if (valueLabel < 100) {
+			val = Math.min(value * 5, max);
+		}
+		const color = Math.floor((val - min) / step);
+		colorMap[color].regions.push({ id: DATA[i].country, tooltip: valueLabel, ...DATA[i] });
+	});
+
+	return colorMap;
+};
+
+COLOR_MAP = getColorMap();
+
+var mapInstance = new VectorMap(map, {
+	stroke: '#37474F',
+	fill: '#263238',
+	readonly: true,
+	hover: false,
+	btnClass: 'btn-light',
+	colorMap: COLOR_MAP,
 });
 
+const updateMap = () => {
+	COLOR_MAP = getColorMap();
+	mapInstance.dispose();
+	mapInstance = new VectorMap(map, {
+		stroke: '#37474F',
+		fill: '#263238',
+		readonly: true,
+		hover: false,
+		btnClass: 'btn-light',
+		colorMap: COLOR_MAP,
+	});
+};
+
+const setActiveBtn = (active, btns) => {
+	btns.forEach((btn) => {
+		if (btn === active) {
+			btn.classList.remove('btn-outline-light');
+			btn.classList.add('btn-light');
+		} else {
+			btn.classList.add('btn-outline-light');
+			btn.classList.remove('btn-light');
+		}
+	});
+};
+
+btns.forEach((btn) => {
+	btn.addEventListener('click', () => {
+		ACTIVE_KEY = btn.getAttribute('data-mdb-key');
+		ACTIVE_COLOR = btn.getAttribute('data-mdb-color');
+
+		updateMap();
+
+		setActiveBtn(btn, btns);
+	});
+});
 
 function loadWarningLettersByCompanyChart() {
 	var url = 'api/fda_warning_letter_company';
@@ -252,3 +420,4 @@ function loadWarningLettersByCompanyChart() {
 
 		});
 }
+

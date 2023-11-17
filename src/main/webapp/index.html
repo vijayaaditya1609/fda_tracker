@@ -12,6 +12,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
 	<!-- MDB -->
 	<link rel="stylesheet" href="css/mdb.min.css" />
+	<link rel="stylesheet" href="plugins/css/vector-maps.min.css" />
 	<!-- Custom styles -->
 	<link rel="stylesheet" href="css/admin.css" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
@@ -308,6 +309,8 @@
 	<main style="margin-top: 58px">
 		<div class="container px-4">
 			<!-- Section: Main chart -->
+			<div class="row">
+			<div class="col-lg-6 col-md-12">
 			<section class="mb-4">
 				<div class="card">
 					<div class="card-header py-3">
@@ -318,8 +321,10 @@
 					</div>
 				</div>
 			</section>
+			</div>
 			<!-- Section: Main chart -->
 			<!-- Section: Bar chart -->
+			<div class="col-lg-6 col-md-12">
 			<section class="mb-4">
 				<div class="card">
 					<div class="card-header py-3">
@@ -330,8 +335,16 @@
 					</div>
 				</div>
 			</section>
+			</div>
+			</div>
 			<!-- Section: Bar chart -->
-
+			<!--Section: Heat Map of Locations-->
+			<section class="border mb-4 text-white" style="background-color: #37474f;">
+				<div id="map-advanced" class=""></div>
+				<hr class="mt-0" />
+				<div id="map-advanced-legend" class="d-flex flex-wrap justify-content-center"></div>
+			</section>
+			<!--Section: Heat Map of Locations-->
 			<!--Section: Sales Performance KPIs-->
 			<section class="mb-4">
 				<div class="card">
@@ -734,8 +747,10 @@
 	<!--Main layout-->
 	<!-- MDB -->
 	<script type="text/javascript" src="js/mdb.min.js"></script>
+	<script type="text/javascript" src="plugins/js/vector-maps.min.js"></script>
 	<!-- Custom scripts -->
 	<script type="text/javascript" src="js/admin.js"></script>
+	<!--<script type="text/javascript" src="js/adminMap.js"></script>-->
 
 </body>
 
