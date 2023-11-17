@@ -12,6 +12,7 @@ var issuingOfficeFilter;
 var issuingOffices = [];
 let innerWidth = null;
 var barChart, lineChart;
+var barChartOgLabels = [];
 const setMode = (e) => {
 	// Check necessary for Android devices
 	if (window.innerWidth === innerWidth) {
@@ -356,8 +357,13 @@ function loadWarningLettersByCompanyChart() {
 		})
 		.then((response) => {
 			var labels = [];
+			barChartOgLabels = [];
 			var data = [];
-			response.forEach(function(i, k) { labels.push(i.company_name); data.push(i.count); })
+			response.forEach(function(i, k) { 
+				labels.push(i.company_name.substring(0,10)); 
+				barChartOgLabels.push(i.company_name);
+				data.push(i.count); 
+				})
 			const dataChartOptionsExample = {
 				type: 'bar',
 				data: {
@@ -386,11 +392,24 @@ function loadWarningLettersByCompanyChart() {
 						},
 					],
 				},
+				options: {
+					tooltips: {
+						callbacks: {
+							label: function(tooltipItems, data) {
+								return barChartOgLabels[tooltipItems.index];
+							}
+						}
+
+					}
+				}
 			};
 
 			// Options
 			const optionsChartOptionsExample = {
 				options: {
+					legend: {
+						display: false
+					},
 					maintainAspectRatio: true,
 					responsive: true,
 					scales: {
@@ -407,6 +426,7 @@ function loadWarningLettersByCompanyChart() {
 							},
 						},
 					},
+
 				},
 			};
 			if (barChart) {
