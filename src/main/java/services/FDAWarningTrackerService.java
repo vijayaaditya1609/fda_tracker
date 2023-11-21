@@ -28,6 +28,7 @@ public class FDAWarningTrackerService {
 					+ "from fda_warning_letter_1 fwl\n" + "where\n" + "	1 = 1\n" + filter + "	\n"
 					+ "group by company_name\n" + "order by count(*)  desc\n" + "limit 10;";
 			PreparedStatement ps = con.prepareStatement(sql);
+			//System.out.println("company sql: "+ sql);
 			int parameterIndex = 1;
 			if (subject != null && subject.length() > 0) {
 				ps.setString(parameterIndex++, subject);
@@ -76,6 +77,9 @@ public class FDAWarningTrackerService {
 			if (issuingOffice != null && issuingOffice.length() > 0) {
 				ps.setString(parameterIndex, issuingOffice);
 			}
+			System.out.println("year sql: "+ sql);
+			System.out.println("parameterIndex: "+parameterIndex);
+			System.out.println("issuingOffice: "+issuingOffice);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Map<String, Object> e = new HashMap<String, Object>();
@@ -153,7 +157,6 @@ public class FDAWarningTrackerService {
 					+ "from fda_warning_letter_1 fwl\r\n" + "where 1=1" + filter + "group by recipient_country \r\n"
 					+ "order by count(*) desc ;";
 			PreparedStatement ps = con.prepareStatement(sql);
-			System.out.println(sql);
 			int parameterIndex = 1;
 			if (subject != null && subject.length() > 0) {
 				ps.setString(parameterIndex++, subject);

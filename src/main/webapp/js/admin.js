@@ -151,7 +151,7 @@ fetch('api/fda_warning_letter_issuing_offices')
 	.then((response) => {
 		issuingOffices = response;
 		var html = '<option selected value = "-1">Please Select Issuing Office</option>';
-		response.forEach(function(i, k) { html += `<option value="1" >[` + i.count + `] ` + i.issuing_office + `</option>` });
+		response.forEach(function(i, k) { html += `<option value="` + k + `" >[` + i.count + `] ` + i.issuing_office + `</option>` });
 		document.querySelector('.select-issuing-office').innerHTML = html;
 	});
 
@@ -359,11 +359,13 @@ function loadWarningLettersByCompanyChart() {
 			var labels = [];
 			barChartOgLabels = [];
 			var data = [];
-			response.forEach(function(i, k) { 
-				labels.push(i.company_name.substring(0,10)); 
+			response.forEach(function(i, k) {
+				labels.push(i.company_name.substring(0, 10));
 				barChartOgLabels.push(i.company_name);
-				data.push(i.count); 
-				})
+				data.push(i.count);
+			})
+			labels.push('NA');
+			data.push(0);
 			const dataChartOptionsExample = {
 				type: 'bar',
 				data: {
@@ -393,6 +395,11 @@ function loadWarningLettersByCompanyChart() {
 					],
 				},
 				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
+					},
 					tooltips: {
 						callbacks: {
 							label: function(tooltipItems, data) {
