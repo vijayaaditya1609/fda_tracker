@@ -64,12 +64,12 @@ window.addEventListener('keyup', (e) => {
 });
 
 function loadWarningLettersByYearChart() {
-	var url = 'api/fda_warning_letter_by_year';
+	var url = 'api/fda_warning_letter_by_year?1=1';
 	if (subjectFilter) {
-		url = url + "?subject=" + encodeURIComponent(subjectFilter)
+		url = url + "&subject=" + encodeURIComponent(subjectFilter)
 	}
 	if (issuingOfficeFilter) {
-		url = url + "?issuing_office=" + encodeURIComponent(issuingOfficeFilter)
+		url = url + "&issuing_office=" + encodeURIComponent(issuingOfficeFilter)
 	}
 	fetch(url)
 		.then((response) => {
@@ -154,7 +154,6 @@ fetch('api/fda_warning_letter_issuing_offices')
 		response.forEach(function(i, k) { html += `<option value="` + k + `" >[` + i.count + `] ` + i.issuing_office + `</option>` });
 		document.querySelector('.select-issuing-office').innerHTML = html;
 	});
-
 document.querySelector('.select-subject').addEventListener("change", function() {
 	console.log('Subject chnaged');
 	if (document.querySelector('.select-subject').value > -1) {
@@ -178,6 +177,7 @@ document.querySelector('.select-issuing-office').addEventListener("change", func
 	loadWarningLettersByCompanyChart()
 	loadCountOfWarningLettersByCountry()
 });
+
 let COLOR_MAP = null;
 
 let ACTIVE_KEY = 'sales';
@@ -232,12 +232,12 @@ const COLORS = {
 };
 
 function loadCountOfWarningLettersByCountry() {
-	var url = "/fdatracker/api/fda_warning_letter_country";
+	var url = "/fdatracker/api/fda_warning_letter_country?1=1";
 	if (subjectFilter) {
-		url = url + "?subject=" + encodeURIComponent(subjectFilter)
+		url = url + "&subject=" + encodeURIComponent(subjectFilter)
 	}
 	if (issuingOfficeFilter) {
-		url = url + "?issuing_office=" + encodeURIComponent(issuingOfficeFilter)
+		url = url + "&issuing_office=" + encodeURIComponent(issuingOfficeFilter)
 	}
 	fetch(url)
 		.then((response) => {
@@ -340,12 +340,12 @@ btns.forEach((btn) => {
 });
 
 function loadWarningLettersByCompanyChart() {
-	var url = 'api/fda_warning_letter_company';
+	var url = 'api/fda_warning_letter_company?1=1';
 	if (subjectFilter) {
-		url = url + "?subject=" + encodeURIComponent(subjectFilter)
+		url = url + "&subject=" + encodeURIComponent(subjectFilter)
 	}
 	if (issuingOfficeFilter) {
-		url = url + "?issuing_office=" + encodeURIComponent(issuingOfficeFilter)
+		url = url + "&issuing_office=" + encodeURIComponent(issuingOfficeFilter)
 	}
 	fetch(url)
 		.then((response) => {
@@ -407,7 +407,8 @@ function loadWarningLettersByCompanyChart() {
 							}
 						}
 
-					}
+					},
+
 				}
 			};
 
@@ -433,6 +434,7 @@ function loadWarningLettersByCompanyChart() {
 							},
 						},
 					},
+					events: ['click']
 
 				},
 			};
@@ -444,7 +446,18 @@ function loadWarningLettersByCompanyChart() {
 				dataChartOptionsExample,
 				optionsChartOptionsExample
 			);
-
+			barChart.options.onClick = function(e) {
+				let url = 'warnings.html?company_name='
+					+ encodeURIComponent(barChartOgLabels[barChart.getElementAtEvent(e)[0]._index])
+				if (subjectFilter)
+					url += '&subject=' + encodeURIComponent(subjectFilter)
+				if (issuingOfficeFilter)
+					url += '&issuing_office=' + encodeURIComponent(issuingOfficeFilter)
+				window.open(url, '_blank');
+			};
 		});
 }
+
+
+
 

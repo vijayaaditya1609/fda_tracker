@@ -117,6 +117,28 @@ public class FDAWarningTrackerService {
 
 		return list;
 	}
+	public List<Map<String, Object>> getWarningLetterCompanies() {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
+		try {
+			Connection con = FDATrackerDAO.getConnection();
+			String sql = "select\n" + "	company_name,\n" + "	count(*)\n" + "from\n" + "	fda_warning_letter_1 fwl\n"
+					+ "group by\n" + "	company_name\n" + "order by\n" + "	count(*) desc";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Map<String, Object> e = new HashMap<String, Object>();
+				e.put("count", rs.getInt("count"));
+				e.put("company_name", rs.getString("company_name"));
+				list.add(e);
+			}
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return list;
+	}
 
 	public List<Map<String, Object>> getWarningLetterSubjects() {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
@@ -178,6 +200,56 @@ public class FDAWarningTrackerService {
 
 		return list;
 
+	}
+
+	public List<Map<String, Object>> getWarningLetters(String subject, String issuingOffice, String companyName) {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
+		try {
+			Connection con = FDATrackerDAO.getConnection();
+			String filter = "";
+			if (subject != null && subject.length() > 0) {
+				filter += " and subject = ? ";
+			}
+			if (issuingOffice != null && issuingOffice.length() > 0) {
+				filter += " and	issuing_office = ? ";
+			}
+			if (companyName != null && companyName.length() > 0) {
+				filter += " and	company_name = ? ";
+			}
+			String sql = "select * \r\n"
+					+ "from fda_warning_letter_1 fwl\r\n" + "where 1=1" + filter + ";";
+			PreparedStatement ps = con.prepareStatement(sql);
+			int parameterIndex = 1;
+			if (subject != null && subject.length() > 0) {
+				ps.setString(parameterIndex++, subject);
+			}
+			if (issuingOffice != null && issuingOffice.length() > 0) {
+				ps.setString(parameterIndex++, issuingOffice);
+			}
+			if (companyName != null && companyName.length() > 0) {
+				ps.setString(parameterIndex, companyName);
+			}
+			System.out.println(ps);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Map<String, Object> e = new HashMap<String, Object>();
+				e.put("id", rs.getInt("id"));
+				e.put("posted_date", rs.getDate("posted_date"));
+				e.put("issue_date", rs.getDate("issue_date"));
+				e.put("company_name", rs.getString("company_name"));
+				e.put("letter_url", rs.getString("letter_url"));
+				e.put("issuing_office", rs.getString("issuing_office"));
+				e.put("subject", rs.getString("subject"));
+				e.put("recipient_country", rs.getString("recipient_country"));
+				list.add(e);
+			}
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return list;
 	}
 
 }
