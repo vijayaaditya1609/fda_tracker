@@ -7,6 +7,8 @@ var issuingOfficeFilter = new URLSearchParams(window.location.search).get('issui
 var issuingOffices = [];
 var companyFilter = new URLSearchParams(window.location.search).get('company_name');
 var companies = [];
+var countryFilter = new URLSearchParams(window.location.search).get('recipient_country');
+var countries = [];
 
 let innerWidth = null;
 const setMode = (e) => {
@@ -58,6 +60,9 @@ function loadFdaTrackerWarningLetters() {
 	}
 	if (companyFilter) {
 		url = url + "&company_name=" + encodeURIComponent(companyFilter)
+	}
+	if (countryFilter) {
+		url = url + "&recipient_country=" + encodeURIComponent(countryFilter)
 	}
 	fetch(url)
 		.then((response) => {
@@ -154,6 +159,28 @@ fetch('api/fda_warning_letter_companies')
 		new mdb.Select(document.querySelector('.select-company'));
 	});
 
+
+fetch('api/fda_warning_letter_countries')
+	.then((response) => {
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		return response.json();
+	})
+	.then((response) => {
+		countries = response;
+		var html = '<option selected value = "-1">Please Select Country</option>';
+		response.forEach(function(i, k) {
+			if (i.recipient_country === countryFilter) {
+				html += `<option value="` + k + `" selected>[` + i.count + `] ` + i.recipient_country + `</option>`
+			} else {
+				html += `<option value="` + k + `" >[` + i.count + `] ` + i.recipient_country + `</option>`
+			}
+		});
+		document.querySelector('.select-country').innerHTML = html;
+		new mdb.Select(document.querySelector('.select-country'));
+	});
 document.querySelector('.select-subject').addEventListener("change", function() {
 	console.log('Subject chnaged');
 	if (document.querySelector('.select-subject').value > -1) {
@@ -185,10 +212,21 @@ document.querySelector('.select-company').addEventListener("change", function() 
 	updateUrl();
 	loadFdaTrackerWarningLetters()
 });
+document.querySelector('.select-country').addEventListener("change", function() {
+	console.log('Country chnaged');
+	if (document.querySelector('.select-country').value > -1) {
+		countryFilter = countries[document.querySelector('.select-country').value].recipient_country;
+	} else {
+		countryFilter = undefined;
+	}
+	updateUrl();
+	loadFdaTrackerWarningLetters()
+});
 function updateUrl() {
 	const url = new URL(location);
 	if (subjectFilter) url.searchParams.set("subject", subjectFilter);
 	if (issuingOfficeFilter) url.searchParams.set("issuing_office", issuingOfficeFilter);
 	if (companyFilter) url.searchParams.set("company_name", companyFilter);
+	if (countryFilter) url.searchParams.set("recipient_country", countryFilter);
 	history.pushState({}, "", url);
 }

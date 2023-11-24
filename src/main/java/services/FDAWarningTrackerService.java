@@ -139,6 +139,30 @@ public class FDAWarningTrackerService {
 
 		return list;
 	}
+	public List<Map<String, Object>> getWarningLetterCountries() {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
+		try {
+			Connection con = FDATrackerDAO.getConnection();
+			String sql = "select recipient_country, count(*)\r\n"
+					+ "from fda_warning_letter_1 fwl \r\n"
+					+ "group by recipient_country \r\n"
+					+ "order by count(*) desc";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Map<String, Object> e = new HashMap<String, Object>();
+				e.put("count", rs.getInt("count"));
+				e.put("recipient_country", rs.getString("recipient_country"));
+				list.add(e);
+			}
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return list;
+	}
 
 	public List<Map<String, Object>> getWarningLetterSubjects() {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
@@ -202,7 +226,7 @@ public class FDAWarningTrackerService {
 
 	}
 
-	public List<Map<String, Object>> getWarningLetters(String subject, String issuingOffice, String companyName) {
+	public List<Map<String, Object>> getWarningLetters(String subject, String issuingOffice, String companyName, String recipientCountry) {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
 		try {
@@ -217,6 +241,9 @@ public class FDAWarningTrackerService {
 			if (companyName != null && companyName.length() > 0) {
 				filter += " and	company_name = ? ";
 			}
+			if (recipientCountry != null && recipientCountry.length() > 0) {
+				filter += " and	recipient_country = ? ";
+			}
 			String sql = "select * \r\n"
 					+ "from fda_warning_letter_1 fwl\r\n" + "where 1=1" + filter + ";";
 			PreparedStatement ps = con.prepareStatement(sql);
@@ -228,7 +255,10 @@ public class FDAWarningTrackerService {
 				ps.setString(parameterIndex++, issuingOffice);
 			}
 			if (companyName != null && companyName.length() > 0) {
-				ps.setString(parameterIndex, companyName);
+				ps.setString(parameterIndex++, companyName);
+			}
+			if (recipientCountry != null && recipientCountry.length() > 0) {
+				ps.setString(parameterIndex, recipientCountry);
 			}
 			System.out.println(ps);
 			ResultSet rs = ps.executeQuery();
