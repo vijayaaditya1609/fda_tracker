@@ -55,6 +55,11 @@ window.addEventListener('keydown', (e) => {
 	}
 });
 
+function redirectToNewPage() {
+        // Replace 'newPage.html' with the actual URL of the page you want to redirect to
+        window.open("warnings.html", '_blank');
+    }
+
 window.addEventListener('keyup', (e) => {
 	keys.forEach((obj) => {
 		if (obj.keyCode === e.code) {
